@@ -1,5 +1,6 @@
 <?php
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Support\Generator\InfoObject;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityRequirement;
@@ -13,7 +14,7 @@ it('builds security scheme', function () {
         ->setInfo(InfoObject::make('API')->setVersion('0.0.1'));
 
     $openApi->secure(SecurityScheme::apiKey('query', 'api_token'));
-    $document = $openApi->toArray();
+    $document = $openApi->toArray(NullableStrategy::UNION_TYPES);
 
     expect($document['security'])->toBe([['apiKey' => []]])
         ->and($document['components']['securitySchemes'])->toBe([
@@ -39,7 +40,7 @@ it('builds oauth2 security scheme', function () {
             })
     );
 
-    assertMatchesSnapshot($openApi->toArray());
+    assertMatchesSnapshot($openApi->toArray(NullableStrategy::UNION_TYPES));
 });
 
 it('builds oauth2 security scheme with empty scope map', function () {
@@ -54,7 +55,7 @@ it('builds oauth2 security scheme with empty scope map', function () {
                     ->tokenUrl('https://test.com/token');
             })
     );
-    $document = $openApi->toArray();
+    $document = $openApi->toArray(NullableStrategy::UNION_TYPES);
 
     expect($document['components']['securitySchemes']['oauth2']['flows']['implicit']['scopes'])
         ->toBeObject();
@@ -72,7 +73,7 @@ it('allows securing with complex security rules', function () {
         'bearer' => [],
     ]);
 
-    $serialized = $openApi->toArray();
+    $serialized = $openApi->toArray(NullableStrategy::UNION_TYPES);
 
     expect($serialized['security'])->toBe([[
         'tenant' => [],

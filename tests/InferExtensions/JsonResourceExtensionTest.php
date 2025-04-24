@@ -1,5 +1,6 @@
 <?php
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\GeneratorConfig;
 use Dedoc\Scramble\Infer;
 use Dedoc\Scramble\OpenApiContext;
@@ -42,7 +43,7 @@ function JsonResourceExtensionTest_analyze(Infer $infer, OpenApiContext $context
 it('supports whenHas', function () {
     [$schema] = JsonResourceExtensionTest_analyze($this->infer, $this->context, JsonResourceExtensionTest_WhenHas::class);
 
-    expect($schema->toArray())->toBe([
+    expect($schema->toArray(NullableStrategy::UNION_TYPES))->toBe([
         'type' => 'object',
         'properties' => [
             'user' => [

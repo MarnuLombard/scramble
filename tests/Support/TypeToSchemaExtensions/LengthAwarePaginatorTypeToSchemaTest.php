@@ -1,5 +1,6 @@
 <?php
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\GeneratorConfig;
 use Dedoc\Scramble\Infer;
 use Dedoc\Scramble\OpenApiContext;
@@ -31,7 +32,7 @@ it('correctly documents when annotated', function () {
     $extension = new LengthAwarePaginatorTypeToSchema($infer, $transformer, $this->components, $this->context);
 
     expect($extension->shouldHandle($type))->toBeTrue();
-    expect($extension->toResponse($type)->toArray())->toMatchSnapshot();
+    expect($extension->toResponse($type)->toArray(NullableStrategy::UNION_TYPES))->toMatchSnapshot();
 });
 
 class LengthAwarePaginatorTypeToSchemaTest_Resource extends JsonResource

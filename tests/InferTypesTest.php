@@ -1,5 +1,6 @@
 <?php
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\GeneratorConfig;
 use Dedoc\Scramble\Infer;
 use Dedoc\Scramble\OpenApiContext;
@@ -53,7 +54,7 @@ it('infers model type', function () {
     $openApiType = $extension->toSchema($type);
 
     expect($this->components->schemas)->toHaveLength(2)->toHaveKeys(['SamplePostModel', 'SampleUserModel']);
-    assertMatchesSnapshot($openApiType->toArray());
+    assertMatchesSnapshot($openApiType->toArray(NullableStrategy::UNION_TYPES));
 });
 
 it('infers model type when toArray is implemented', function () {
@@ -67,7 +68,7 @@ it('infers model type when toArray is implemented', function () {
     $openApiType = $extension->toSchema($type);
 
     expect($this->components->schemas)->toHaveLength(2)->toHaveKeys(['SamplePostModelWithToArray', 'SampleUserModel']);
-    assertMatchesSnapshot($openApiType->toArray());
+    assertMatchesSnapshot($openApiType->toArray(NullableStrategy::UNION_TYPES));
 });
 
 /**

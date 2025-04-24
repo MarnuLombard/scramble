@@ -1,6 +1,7 @@
 <?php
 
 use Dedoc\Scramble\Attributes\SchemaName;
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\GeneratorConfig;
 use Dedoc\Scramble\Infer;
 use Dedoc\Scramble\OpenApiContext;
@@ -27,7 +28,7 @@ it('supports call to method', function () {
     ]);
     $extension = new JsonResourceTypeToSchema($infer, $transformer, $this->context->openApi->components, $this->context);
 
-    expect($extension->toSchema($type)->toArray())->toBe([
+    expect($extension->toSchema($type)->toArray(NullableStrategy::UNION_TYPES))->toBe([
         'type' => 'object',
         'properties' => [
             'res_int' => ['type' => 'integer'],
@@ -45,7 +46,7 @@ it('supports parent toArray class', function (string $className, array $expected
     ]);
     $extension = new JsonResourceTypeToSchema($infer, $transformer, $this->context->openApi->components, $this->context);
 
-    expect($extension->toSchema($type)->toArray())->toBe($expectedSchemaArray);
+    expect($extension->toSchema($type)->toArray(NullableStrategy::UNION_TYPES))->toBe($expectedSchemaArray);
 })->with([
     [JsonResourceTypeToSchemaTest_NestedSample::class, [
         'type' => 'object',
@@ -222,7 +223,7 @@ it('handles default in json api resource', function () {
     ]);
     $extension = new JsonResourceTypeToSchema($infer, $transformer, $this->context->openApi->components, $this->context);
 
-    expect($extension->toSchema($type)->toArray())->toBe([
+    expect($extension->toSchema($type)->toArray(NullableStrategy::UNION_TYPES))->toBe([
         'type' => 'object',
         'properties' => [
             'foo' => [

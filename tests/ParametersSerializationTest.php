@@ -1,5 +1,6 @@
 <?php
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Support\Generator\Parameter;
 use Dedoc\Scramble\Support\Generator\Schema;
 use Dedoc\Scramble\Support\Generator\Types\StringType;
@@ -13,7 +14,7 @@ it('checks return type of param when "style" and "explode" specified', function 
     $parameter->setExplode(false);
     $parameter->setStyle('form');
 
-    expect($parameter->toArray())->toBe([
+    expect($parameter->toArray(NullableStrategy::UNION_TYPES))->toBe([
         'name' => 'includes',
         'in' => 'query',
         'style' => 'form',
@@ -36,7 +37,7 @@ it('checks return type of param when "style" and "explode" not specified', funct
     $parameter = new Parameter('includes', 'query');
     $parameter->setSchema(Schema::fromType($type));
 
-    expect($parameter->toArray())->toBe([
+    expect($parameter->toArray(NullableStrategy::UNION_TYPES))->toBe([
         'name' => 'includes',
         'in' => 'query',
         'schema' => [

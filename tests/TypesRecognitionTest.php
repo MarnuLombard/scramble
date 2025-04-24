@@ -1,5 +1,6 @@
 <?php
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\GeneratorConfig;
 use Dedoc\Scramble\OpenApiContext;
 use Dedoc\Scramble\PhpDoc\PhpDocTypeHelper;
@@ -32,7 +33,7 @@ function getPhpTypeFromDoc(string $phpDoc)
 it('handles simple types', function ($phpDoc) {
     $result = getTypeFromDoc($phpDoc);
 
-    assertMatchesSnapshot($result ? $result->toArray() : null);
+    assertMatchesSnapshot($result ? $result->toArray(NullableStrategy::UNION_TYPES) : null);
 })->with([
     '/** @var string */',
     '/** @var int */',
@@ -67,7 +68,7 @@ it('handles literal types', function ($phpDoc, $expectedType) {
 it('handles general arrays', function ($phpDoc) {
     $result = getTypeFromDoc($phpDoc);
 
-    assertMatchesSnapshot($result ? $result->toArray() : null);
+    assertMatchesSnapshot($result ? $result->toArray(NullableStrategy::UNION_TYPES) : null);
 })->with([
     '/** @var string[] */',
     '/** @var array<string> */',
@@ -78,7 +79,7 @@ it('handles general arrays', function ($phpDoc) {
 it('handles shape arrays', function ($phpDoc) {
     $result = getTypeFromDoc($phpDoc);
 
-    assertMatchesSnapshot($result ? $result->toArray() : null);
+    assertMatchesSnapshot($result ? $result->toArray(NullableStrategy::UNION_TYPES) : null);
 })->with([
     '/** @var array{string} */', // list with one item
     '/** @var array{int, string} */', // list
@@ -92,20 +93,20 @@ it('handles intersection type', function () {
     $phpDoc = '/** @var array{test: string, wow?: string} & array{nice: bool} & array{kek: bool} */';
     $result = getTypeFromDoc($phpDoc);
 
-    assertMatchesSnapshot($result ? $result->toArray() : null);
+    assertMatchesSnapshot($result ? $result->toArray(NullableStrategy::UNION_TYPES) : null);
 });
 
 it('handles union type', function () {
     $phpDoc = '/** @var array{test: string, wow?: string} | array{nice: bool} | array{kek: bool} */';
     $result = getTypeFromDoc($phpDoc);
 
-    assertMatchesSnapshot($result ? $result->toArray() : null);
+    assertMatchesSnapshot($result ? $result->toArray(NullableStrategy::UNION_TYPES) : null);
 });
 
 it('handles unions of string literals', function ($phpDoc) {
     $result = getTypeFromDoc($phpDoc);
 
-    assertMatchesSnapshot($result ? $result->toArray() : null);
+    assertMatchesSnapshot($result ? $result->toArray(NullableStrategy::UNION_TYPES) : null);
 })->with([
     "/** @var 'foo'|'bar' */",
     "/** @var 'foo'|'bar'|string */",

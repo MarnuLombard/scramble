@@ -1,5 +1,6 @@
 <?php
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Extensions\ExceptionToResponseExtension;
 use Dedoc\Scramble\GeneratorConfig;
 use Dedoc\Scramble\Infer;
@@ -31,7 +32,8 @@ it('correctly overrides default extension when custom extension exists', functio
     ]);
     $extension = new CustomAuthenticationExceptionToResponseExtension($infer, $transformer, $this->components);
 
-    expect($extension->toResponse($type)->toArray())->toMatchArray($transformer->toResponse($type)->resolve()->toArray());
+    expect($extension->toResponse($type)->toArray(NullableStrategy::UNION_TYPES))
+        ->toMatchArray($transformer->toResponse($type)->resolve()->toArray(NullableStrategy::UNION_TYPES));
 });
 
 class CustomAuthenticationExceptionToResponseExtension extends ExceptionToResponseExtension

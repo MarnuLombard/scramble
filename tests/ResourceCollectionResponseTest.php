@@ -1,5 +1,6 @@
 <?php
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\GeneratorConfig;
 use Dedoc\Scramble\Infer;
 use Dedoc\Scramble\OpenApiContext;
@@ -25,7 +26,7 @@ test('transforms collection with toArray only', function () {
 
     $type = new ObjectType(UserCollection_One::class);
 
-    assertMatchesSnapshot($extension->toSchema($type)->toArray());
+    assertMatchesSnapshot($extension->toSchema($type)->toArray(NullableStrategy::UNION_TYPES));
 });
 class UserCollection_One extends \Illuminate\Http\Resources\Json\ResourceCollection
 {
@@ -51,7 +52,7 @@ test('transforms collection with toArray and with', function () {
 
     $type = new ObjectType(UserCollection_Two::class);
 
-    assertMatchesSnapshot($extension->toSchema($type)->toArray());
+    assertMatchesSnapshot($extension->toSchema($type)->toArray(NullableStrategy::UNION_TYPES));
 });
 class UserCollection_Two extends \Illuminate\Http\Resources\Json\ResourceCollection
 {
@@ -85,8 +86,8 @@ test('transforms collection without proper toArray implementation', function () 
     $type = new ObjectType(UserCollection_Three::class);
 
     assertMatchesSnapshot([
-        'response' => $extension->toResponse($type)->toArray(),
-        'components' => $this->components->toArray(),
+        'response' => $extension->toResponse($type)->toArray(NullableStrategy::UNION_TYPES),
+        'components' => $this->components->toArray(NullableStrategy::UNION_TYPES),
     ]);
 });
 class UserCollection_Three extends \Illuminate\Http\Resources\Json\ResourceCollection
@@ -108,8 +109,8 @@ test('transforms collection without toArray implementation', function () {
     $type = new ObjectType(UserCollection_Four::class);
 
     assertMatchesSnapshot([
-        'response' => $extension->toResponse($type)->toArray(),
-        'components' => $this->components->toArray(),
+        'response' => $extension->toResponse($type)->toArray(NullableStrategy::UNION_TYPES),
+        'components' => $this->components->toArray(NullableStrategy::UNION_TYPES),
     ]);
 });
 class UserCollection_Four extends \Illuminate\Http\Resources\Json\ResourceCollection

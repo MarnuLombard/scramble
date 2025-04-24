@@ -1,5 +1,6 @@
 <?php
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\GeneratorConfig;
 use Dedoc\Scramble\OpenApiContext;
 use Dedoc\Scramble\Scramble;
@@ -43,7 +44,7 @@ it('supports confirmed rule', function () {
 
     $params = ($this->buildRulesToParameters)($rules)->handle();
 
-    expect($params = collect($params)->map->toArray()->all())
+    expect($params = collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all())
         ->toHaveCount(2)
         ->and($params[1])
         ->toMatchArray(['name' => 'password_confirmation']);
@@ -56,7 +57,7 @@ it('supports confirmed rule in array', function () {
 
     $params = validationRulesToDocumentationWithDeep(($this->buildRulesToParameters)($rules));
 
-    expect($params = collect($params)->map->toArray()->all())
+    expect($params = collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all())
         ->toHaveCount(1)
         ->and($params[0])
         ->toMatchArray([
@@ -79,7 +80,7 @@ it('supports multiple confirmed rule', function () {
 
     $params = ($this->buildRulesToParameters)($rules)->handle();
 
-    expect($params = collect($params)->map->toArray()->all())
+    expect($params = collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all())
         ->toHaveCount(4)
         ->and($params[2])
         ->toMatchArray(['name' => 'password_confirmation'])
@@ -97,7 +98,7 @@ it('works when last validation item is items array', function () {
 
     $params = validationRulesToDocumentationWithDeep(($this->buildRulesToParameters)($rules));
 
-    expect($params = collect($params)->map->toArray()->all())
+    expect($params = collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all())
         ->toBe([
             [
                 'name' => 'items',
@@ -136,7 +137,7 @@ it('extract rules from array like rules', function () {
 
     $params = validationRulesToDocumentationWithDeep(($this->buildRulesToParameters)($rules));
 
-    assertMatchesSnapshot(collect($params)->map->toArray()->all());
+    assertMatchesSnapshot(collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all());
 });
 
 it('extract rules from array rules', function () {
@@ -147,7 +148,7 @@ it('extract rules from array rules', function () {
 
     $params = validationRulesToDocumentationWithDeep(($this->buildRulesToParameters)($rules));
 
-    assertMatchesSnapshot(collect($params)->map->toArray()->all());
+    assertMatchesSnapshot(collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all());
 });
 
 it('supports array rule details', function () {
@@ -159,7 +160,7 @@ it('supports array rule details', function () {
 
     $params = validationRulesToDocumentationWithDeep(($this->buildRulesToParameters)($rules));
 
-    assertMatchesSnapshot(json_encode(collect($params)->map->toArray()->all()));
+    assertMatchesSnapshot(json_encode(collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all()));
 });
 
 it('supports array rule params', function () {
@@ -169,7 +170,7 @@ it('supports array rule params', function () {
 
     $params = ($this->buildRulesToParameters)($rules)->handle();
 
-    assertMatchesSnapshot(collect($params)->map->toArray()->all());
+    assertMatchesSnapshot(collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all());
 });
 
 it('extract rules from enum rule', function () {
@@ -179,7 +180,7 @@ it('extract rules from enum rule', function () {
 
     $params = ($this->buildRulesToParameters)($rules)->handle();
 
-    assertMatchesSnapshot(collect($params)->map->toArray()->all());
+    assertMatchesSnapshot(collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all());
 });
 
 if (method_exists(Enum::class, 'only')) {
@@ -190,7 +191,7 @@ if (method_exists(Enum::class, 'only')) {
 
         $params = ($this->buildRulesToParameters)($rules)->handle();
 
-        expect($params[0]->toArray()['schema'])->toBe([
+        expect($params[0]->toArray(NullableStrategy::UNION_TYPES)['schema'])->toBe([
             'type' => 'string',
             'enum' => [
                 'draft',
@@ -206,7 +207,7 @@ if (method_exists(Enum::class, 'only')) {
 
         $params = ($this->buildRulesToParameters)($rules)->handle();
 
-        expect($params[0]->toArray()['schema'])->toBe([
+        expect($params[0]->toArray(NullableStrategy::UNION_TYPES)['schema'])->toBe([
             'type' => 'string',
             'enum' => [
                 'published',
@@ -225,7 +226,7 @@ it('extract rules from object like rules', function () {
 
     $params = validationRulesToDocumentationWithDeep(($this->buildRulesToParameters)($rules));
 
-    assertMatchesSnapshot(collect($params)->map->toArray()->all());
+    assertMatchesSnapshot(collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all());
 });
 
 it('supports uuid', function () {
@@ -235,7 +236,7 @@ it('supports uuid', function () {
 
     $params = ($this->buildRulesToParameters)($rules)->handle();
 
-    assertMatchesSnapshot(collect($params)->map->toArray()->all());
+    assertMatchesSnapshot(collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all());
 });
 
 it('extract rules from object like rules heavy case', function () {
@@ -252,7 +253,7 @@ it('extract rules from object like rules heavy case', function () {
 
     $params = validationRulesToDocumentationWithDeep(($this->buildRulesToParameters)($rules));
 
-    assertMatchesSnapshot(collect($params)->map->toArray()->all());
+    assertMatchesSnapshot(collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all());
 });
 
 it('extract rules from object like rules with explicit array', function () {
@@ -263,7 +264,7 @@ it('extract rules from object like rules with explicit array', function () {
 
     $params = validationRulesToDocumentationWithDeep(($this->buildRulesToParameters)($rules));
 
-    assertMatchesSnapshot(collect($params)->map->toArray()->all());
+    assertMatchesSnapshot(collect($params)->map->toArray(NullableStrategy::UNION_TYPES)->all());
 });
 
 it('supports exists rule', function () {
@@ -310,6 +311,7 @@ it('converts min rule into "minimum" for numeric fields', function () {
         ->toHaveCount(1)
         ->and($params[0]->schema->type)
         ->toBeInstanceOf(\Dedoc\Scramble\Support\Generator\Types\NumberType::class)
+        ->and($params[0]->schema->toArray(NullableStrategy::UNION_TYPES))
         ->toHaveKey('minimum', 8);
 });
 
@@ -324,6 +326,7 @@ it('converts max rule into "maximum" for numeric fields', function () {
         ->toHaveCount(1)
         ->and($params[0]->schema->type)
         ->toBeInstanceOf(\Dedoc\Scramble\Support\Generator\Types\NumberType::class)
+        ->and($params[0]->schema->toArray(NullableStrategy::UNION_TYPES))
         ->toHaveKey('maximum', 8);
 });
 
@@ -338,6 +341,7 @@ it('converts min rule into "minLength" for string fields', function () {
         ->toHaveCount(1)
         ->and($params[0]->schema->type)
         ->toBeInstanceOf(\Dedoc\Scramble\Support\Generator\Types\StringType::class)
+        ->and($params[0]->schema->toArray(NullableStrategy::UNION_TYPES))
         ->toHaveKey('minLength', 8);
 });
 
@@ -352,6 +356,7 @@ it('converts max rule into "maxLength" for string fields', function () {
         ->toHaveCount(1)
         ->and($params[0]->schema->type)
         ->toBeInstanceOf(\Dedoc\Scramble\Support\Generator\Types\StringType::class)
+        ->and($params[0]->schema->toArray(NullableStrategy::UNION_TYPES))
         ->toHaveKey('maxLength', 8);
 });
 
@@ -366,6 +371,7 @@ it('converts min rule into "minItems" for array fields', function () {
         ->toHaveCount(1)
         ->and($params[0]->schema->type)
         ->toBeInstanceOf(\Dedoc\Scramble\Support\Generator\Types\ArrayType::class)
+        ->and($params[0]->schema->toArray(NullableStrategy::UNION_TYPES))
         ->toHaveKey('minItems', 8);
 });
 
@@ -380,6 +386,7 @@ it('converts max rule into "maxItems" for array fields', function () {
         ->toHaveCount(1)
         ->and($params[0]->schema->type)
         ->toBeInstanceOf(\Dedoc\Scramble\Support\Generator\Types\ArrayType::class)
+        ->and($params[0]->schema->toArray(NullableStrategy::UNION_TYPES))
         ->toHaveKey('maxItems', 8);
 });
 
@@ -417,7 +424,7 @@ it('documents root arrays', function () {
 
     $params = ($this->buildRulesToParameters)($rules)->handle();
 
-    expect(($type = $params[0]->schema->type->toArray()))
+    expect(($type = $params[0]->schema->type->toArray(NullableStrategy::UNION_TYPES)))
         ->toBe([
             'type' => 'array',
             'items' => [
