@@ -2,6 +2,7 @@
 
 namespace Dedoc\Scramble\Support\Generator;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Support\Generator\Types\ObjectType;
 use Dedoc\Scramble\Support\Generator\Types\StringType;
 use Dedoc\Scramble\Support\Generator\Types\Type;
@@ -28,9 +29,9 @@ class Schema
         return $this;
     }
 
-    public function toArray()
+    public function toArray(NullableStrategy $nullableStrategy)
     {
-        $typeArray = $this->type->toArray();
+        $typeArray = $this->type->toArray($nullableStrategy);
 
         if ($typeArray instanceof \stdClass) { // mixed
             $typeArray = [];

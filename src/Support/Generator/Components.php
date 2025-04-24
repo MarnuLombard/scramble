@@ -2,6 +2,7 @@
 
 namespace Dedoc\Scramble\Support\Generator;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
@@ -43,7 +44,7 @@ class Components
         unset($this->schemas[$schemaName]);
     }
 
-    public function toArray()
+    public function toArray(NullableStrategy $nullableStrategy)
     {
         $result = [];
 
@@ -55,9 +56,9 @@ class Components
 
         if (count($this->schemas)) {
             $result['schemas'] = collect($this->schemas)
-                ->mapWithKeys(function (Schema $s, string $fullName) {
+                ->mapWithKeys(function (Schema $s, string $fullName) use ($nullableStrategy) {
                     return [
-                        $this->uniqueSchemaName($fullName) => $s->setTitle($this->uniqueSchemaName($fullName))->toArray(),
+                        $this->uniqueSchemaName($fullName) => $s->setTitle($this->uniqueSchemaName($fullName))->toArray($nullableStrategy),
                     ];
                 })
                 ->sortKeys()
@@ -66,9 +67,9 @@ class Components
 
         if (count($this->responses)) {
             $result['responses'] = collect($this->responses)
-                ->mapWithKeys(function (Response $r, string $fullName) {
+                ->mapWithKeys(function (Response $r, string $fullName) use ($nullableStrategy) {
                     return [
-                        $this->uniqueSchemaName($fullName) => $r->toArray(),
+                        $this->uniqueSchemaName($fullName) => $r->toArray($nullableStrategy),
                     ];
                 })
                 ->toArray();

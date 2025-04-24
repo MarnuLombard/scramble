@@ -2,6 +2,8 @@
 
 namespace Dedoc\Scramble\Support\Generator;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
+
 class RequestBodyObject
 {
     public string $description = '';
@@ -40,7 +42,7 @@ class RequestBodyObject
         return $this;
     }
 
-    public function toArray()
+    public function toArray(NullableStrategy $nullableStrategy)
     {
         $result = array_filter([
             'description' => $this->description,
@@ -50,7 +52,7 @@ class RequestBodyObject
         $content = [];
         foreach ($this->content as $mediaType => $schema) {
             $content[$mediaType] = [
-                'schema' => $schema->toArray(),
+                'schema' => $schema->toArray($nullableStrategy),
             ];
         }
 

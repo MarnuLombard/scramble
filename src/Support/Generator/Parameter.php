@@ -2,6 +2,8 @@
 
 namespace Dedoc\Scramble\Support\Generator;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
+
 class Parameter
 {
     use WithAttributes;
@@ -58,7 +60,7 @@ class Parameter
         return new static($name, $in);
     }
 
-    public function toArray(): array
+    public function toArray(NullableStrategy $nullableStrategy): array
     {
         $result = array_filter([
             'name' => $this->name,
@@ -71,7 +73,7 @@ class Parameter
         ]);
 
         if ($this->schema) {
-            $result['schema'] = $this->schema->toArray();
+            $result['schema'] = $this->schema->toArray($nullableStrategy);
         }
 
         $examples = [];

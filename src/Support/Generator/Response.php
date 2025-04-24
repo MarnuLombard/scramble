@@ -2,6 +2,8 @@
 
 namespace Dedoc\Scramble\Support\Generator;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
+
 class Response
 {
     public ?int $code = null;
@@ -31,7 +33,7 @@ class Response
         return $this;
     }
 
-    public function toArray()
+    public function toArray(NullableStrategy $nullableStrategy)
     {
         $result = [
             'description' => $this->description,
@@ -40,7 +42,7 @@ class Response
         if (isset($this->content)) {
             $content = [];
             foreach ($this->content ?? [] as $mediaType => $schema) {
-                $content[$mediaType] = $schema ? ['schema' => $schema->toArray()] : (object) [];
+                $content[$mediaType] = $schema ? ['schema' => $schema->toArray($nullableStrategy)] : (object) [];
             }
             $result['content'] = $content;
         }

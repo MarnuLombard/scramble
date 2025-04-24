@@ -2,6 +2,8 @@
 
 namespace Dedoc\Scramble\Support\Generator;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
+
 class Operation
 {
     use WithAttributes;
@@ -140,7 +142,7 @@ class Operation
         return $this;
     }
 
-    public function toArray()
+    public function toArray(NullableStrategy $nullableStrategy)
     {
         $result = [];
 
@@ -165,22 +167,22 @@ class Operation
         }
 
         if (count($this->parameters)) {
-            $result['parameters'] = array_map(fn (Parameter $p) => $p->toArray(), $this->parameters);
+            $result['parameters'] = array_map(fn (Parameter $p) => $p->toArray($nullableStrategy), $this->parameters);
         }
 
         if ($this->requestBodyObject) {
-            $result['requestBody'] = $this->requestBodyObject->toArray();
+            $result['requestBody'] = $this->requestBodyObject->toArray($nullableStrategy);
         }
 
         if (count($this->responses)) {
             $responses = [];
             foreach ($this->responses as $response) {
                 if ($response instanceof Response) {
-                    $responses[$response->code ?: 'default'] = $response->toArray();
+                    $responses[$response->code ?: 'default'] = $response->toArray($nullableStrategy);
                 } elseif ($response instanceof Reference) {
                     $referencedResponse = $response->resolve();
 
-                    $responses[$referencedResponse->code ?: 'default'] = $response->toArray();
+                    $responses[$referencedResponse->code ?: 'default'] = $response->toArray($nullableStrategy);
                 }
             }
             $result['responses'] = $responses;

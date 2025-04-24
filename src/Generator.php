@@ -4,6 +4,7 @@ namespace Dedoc\Scramble;
 
 use Dedoc\Scramble\Attributes\ExcludeAllRoutesFromDocs;
 use Dedoc\Scramble\Attributes\ExcludeRouteFromDocs;
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Contracts\DocumentTransformer;
 use Dedoc\Scramble\Exceptions\RouteAware;
 use Dedoc\Scramble\OpenApiVisitor\SchemaEnforceVisitor;
@@ -54,6 +55,7 @@ class Generator
         $openApi = $this->makeOpenApi($config);
         $context = new OpenApiContext($openApi, $config);
         $typeTransformer = $this->buildTypeTransformer($context);
+        $nullableStrategy = $config->get('nullable_strategy', NullableStrategy::UNION_TYPES);
 
         $this->getRoutes($config)
             ->map(function (Route $route, int $index) use ($openApi, $config, $typeTransformer) {
@@ -115,7 +117,7 @@ class Generator
             throw new InvalidArgumentException('(callable(OpenApi, OpenApiContext): void)|DocumentTransformer type for document transformer expected, received '.$openApiTransformer::class);
         }
 
-        return $openApi->toArray();
+        return $openApi->toArray($nullableStrategy);
     }
 
     private function createOperationsSorter(): array

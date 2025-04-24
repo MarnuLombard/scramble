@@ -2,6 +2,8 @@
 
 namespace Dedoc\Scramble\Support\Generator;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
+
 class OpenApi
 {
     public string $version;
@@ -78,7 +80,7 @@ class OpenApi
         return $this;
     }
 
-    public function toArray()
+    public function toArray(NullableStrategy $nullableStrategy)
     {
         $result = [
             'openapi' => $this->version,
@@ -105,14 +107,14 @@ class OpenApi
             foreach ($this->paths as $pathBuilder) {
                 $paths['/'.$pathBuilder->path] = array_merge(
                     $paths['/'.$pathBuilder->path] ?? [],
-                    $pathBuilder->toArray(),
+                    $pathBuilder->toArray($nullableStrategy),
                 );
             }
 
             $result['paths'] = $paths;
         }
 
-        if (count($serializedComponents = $this->components->toArray())) {
+        if (count($serializedComponents = $this->components->toArray($nullableStrategy))) {
             $result['components'] = $serializedComponents;
         }
 

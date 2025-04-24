@@ -2,6 +2,8 @@
 
 namespace Dedoc\Scramble\Support\Generator;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
+
 class Path
 {
     public string $path;
@@ -39,12 +41,12 @@ class Path
         return $this;
     }
 
-    public function toArray()
+    public function toArray(NullableStrategy $nullableStrategy)
     {
         $result = [];
 
         foreach ($this->operations as $method => $operation) {
-            $result[$method] = $operation->toArray();
+            $result[$method] = $operation->toArray($nullableStrategy);
         }
 
         if (count($this->servers)) {

@@ -2,6 +2,8 @@
 
 namespace Dedoc\Scramble\Support\Generator\Types;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
+
 class StringType extends Type
 {
     public $min = null;
@@ -27,9 +29,9 @@ class StringType extends Type
         return $this;
     }
 
-    public function toArray()
+    public function toArray(NullableStrategy $nullableStrategy)
     {
-        return array_merge(parent::toArray(), array_filter([
+        return array_merge(parent::toArray($nullableStrategy), array_filter([
             'minLength' => $this->min,
             'maxLength' => $this->max,
         ], fn ($v) => $v !== null));

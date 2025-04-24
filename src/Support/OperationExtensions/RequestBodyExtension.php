@@ -2,6 +2,7 @@
 
 namespace Dedoc\Scramble\Support\OperationExtensions;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Extensions\OperationExtension;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\ContainerUtils;
@@ -189,9 +190,11 @@ class RequestBodyExtension extends OperationExtension
 
     protected function hasBinary($bodyParams): bool
     {
-        return collect($bodyParams)->contains(function (Parameter $parameter) {
+        $nullableStrategy = $this->config->get('nullable_strategy', NullableStrategy::UNION_TYPES);
+
+        return collect($bodyParams)->contains(function (Parameter $parameter) use ($nullableStrategy) {
             // @todo: Use OpenApi document tree walker when ready
-            $parameterString = json_encode($parameter->toArray());
+            $parameterString = json_encode($parameter->toArray($nullableStrategy));
 
             return Str::contains($parameterString, '"contentMediaType":"application\/octet-stream"');
         });

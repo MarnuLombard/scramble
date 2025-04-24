@@ -2,6 +2,7 @@
 
 namespace Dedoc\Scramble\Support\Generator\Combined;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Support\Generator\Types\StringType;
 use Dedoc\Scramble\Support\Generator\Types\Type;
 use InvalidArgumentException;
@@ -17,11 +18,11 @@ class AnyOf extends Type
         $this->items = [new StringType];
     }
 
-    public function toArray()
+    public function toArray(NullableStrategy $nullableStrategy)
     {
         return [
             'anyOf' => array_map(
-                fn ($item) => $item->toArray(),
+                fn ($item) => $item->toArray($nullableStrategy),
                 $this->items,
             ),
         ];

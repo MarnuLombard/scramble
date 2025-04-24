@@ -2,6 +2,7 @@
 
 namespace Dedoc\Scramble\Support\OperationExtensions;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Extensions\OperationExtension;
 use Dedoc\Scramble\Support\Generator\Combined\AnyOf;
 use Dedoc\Scramble\Support\Generator\Operation;
@@ -18,6 +19,7 @@ class ResponseExtension extends OperationExtension
     public function handle(Operation $operation, RouteInfo $routeInfo)
     {
         $returnType = $routeInfo->getReturnType();
+        $nullableStrategy = $this->config->get('nullable_strategy', NullableStrategy::UNION_TYPES);
 
         if (! $returnType) {
             return [];
@@ -44,14 +46,14 @@ class ResponseExtension extends OperationExtension
             })
             ->map($this->openApiTransformer->toResponse(...))
             ->filter()
-            ->unique(fn ($response) => ($response instanceof Response ? $response->code : 'ref').':'.json_encode($response->toArray()))
+            ->unique(fn ($response) => ($response instanceof Response ? $response->code : 'ref').':'.json_encode($response->toArray($nullableStrategy)))
             ->values();
 
         [$responses, $references] = $responses->partition(fn ($r) => $r instanceof Response);
 
         $responses = $responses
             ->groupBy('code')
-            ->map(function (Collection $responses, $code) {
+            ->map(function (Collection $responses, $code) use ($nullableStrategy) {
                 if (count($responses) === 1) {
                     return $responses->first();
                 }
@@ -64,7 +66,7 @@ class ResponseExtension extends OperationExtension
                      * by status, it should become an empty string.
                      */
                     ->map(fn ($type) => $type ?: new OpenApiTypes\StringType)
-                    ->unique(fn ($type) => json_encode($type->toArray()))
+                    ->unique(fn ($type) => json_encode($type->toArray($nullableStrategy)))
                     ->values()
                     ->all();
 

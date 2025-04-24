@@ -2,6 +2,7 @@
 
 namespace Dedoc\Scramble\Support\Generator\Types;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Support\Generator\Schema;
 
 class ArrayType extends Type
@@ -63,18 +64,18 @@ class ArrayType extends Type
         return $this;
     }
 
-    public function toArray()
+    public function toArray(NullableStrategy $nullableStrategy)
     {
         $shouldOmitItems = $this->items->getAttribute('missing')
             && count($this->prefixItems);
 
         return array_merge(
-            parent::toArray(),
+            parent::toArray($nullableStrategy),
             $shouldOmitItems ? [] : [
-                'items' => $this->items->toArray(),
+                'items' => $this->items->toArray($nullableStrategy),
             ],
             $this->prefixItems ? [
-                'prefixItems' => array_map(fn ($item) => $item->toArray(), $this->prefixItems),
+                'prefixItems' => array_map(fn ($item) => $item->toArray($nullableStrategy), $this->prefixItems),
             ] : [],
             array_filter([
                 'minItems' => $this->minItems,

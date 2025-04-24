@@ -3,6 +3,7 @@
 namespace Dedoc\Scramble\Support\Generator;
 
 use Carbon\CarbonInterface;
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Extensions\ExceptionToResponseExtension;
 use Dedoc\Scramble\Extensions\TypeToSchemaExtension;
 use Dedoc\Scramble\Infer;
@@ -180,7 +181,8 @@ class TypeTransformer
                 }
 
                 // Removing duplicated schemas before making a resulting AnyOf type.
-                $uniqueItems = collect($items)->unique(fn ($i) => json_encode($i->toArray()))->values()->all();
+                $nullableStrategy = $this->context->config->get('nullable_strategy', NullableStrategy::UNION_TYPES);
+                $uniqueItems = collect($items)->unique(fn ($i) => json_encode($i->toArray($nullableStrategy)))->values()->all();
                 $openApiType = count($uniqueItems) === 1 ? $uniqueItems[0] : (new AnyOf)->setItems($uniqueItems);
             }
         } elseif ($type instanceof LiteralStringType) {
@@ -281,7 +283,8 @@ class TypeTransformer
         // In case of union type being returned and all of its types resulting in the same response, we want to make
         // sure to take only unique types to avoid having the same types in the response.
         if ($type instanceof Union) {
-            $uniqueItems = collect($type->types)->unique(fn ($i) => json_encode($this->transform($i)->toArray()))->values()->all();
+            $nullableStrategy = $this->context->config->get('nullable_strategy', NullableStrategy::UNION_TYPES);
+            $uniqueItems = collect($type->types)->unique(fn ($i) => json_encode($this->transform($i)->toArray($nullableStrategy)))->values()->all();
             $type = count($uniqueItems) === 1 ? $uniqueItems[0] : Union::wrap($uniqueItems);
         }
 
