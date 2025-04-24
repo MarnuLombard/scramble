@@ -1,5 +1,6 @@
 <?php
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Http\Middleware\RestrictedDocsAccess;
 
 return [
@@ -101,6 +102,14 @@ return [
      * - false - Case descriptions are ignored.
      */
     'enum_cases_description_strategy' => 'description',
+
+    /**
+     * Determines how scramble will output nullable types and schemas
+     * Available options:
+     * - NullableStrategy::UNION_TYPES – The "type" will be a union of the original type and null
+     * - NullableStrategy::NULLABLE – The "type" will be maintained, with the property "nullable" set to true
+     */
+    'nullable_strategy' => NullableStrategy::UNION_TYPES,
 
     'middleware' => [
         'web',

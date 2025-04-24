@@ -208,6 +208,27 @@ it('gets nullable type reference', function () {
     ]);
 });
 
+it('correctly uses nullableschema type nullable', function () {
+    $transformer = new TypeTransformer(app(Infer::class), $this->context, [JsonResourceTypeToSchema::class]);
+
+    $type = new ObjectType(InferTypesTest_JsonResourceWithCarbonAttribute::class);
+
+    $transformer->transform($type)->toArray(NullableStrategy::UNION_TYPES);
+
+    expect(
+        $this
+            ->context
+            ->openApi
+            ->components
+            ->getSchema(InferTypesTest_JsonResourceWithCarbonAttribute::class)
+            ->toArray(NullableStrategy::NULLABLE)['properties']['created_at'],
+    )->toBe([
+        'type' => 'string',
+        'nullable' => true,
+        'format' => 'date-time',
+    ]);
+});
+
 it('infers date column directly referenced in json as date-time', function () {
     $transformer = new TypeTransformer($infer = app(Infer::class), $this->context, [JsonResourceTypeToSchema::class]);
 

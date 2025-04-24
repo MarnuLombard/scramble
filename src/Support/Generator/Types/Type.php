@@ -2,6 +2,7 @@
 
 namespace Dedoc\Scramble\Support\Generator\Types;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Support\Generator\MissingExample;
 use Dedoc\Scramble\Support\Generator\WithAttributes;
 use Dedoc\Scramble\Support\Generator\WithExtensions;
@@ -82,11 +83,16 @@ abstract class Type
         return $this;
     }
 
-    public function toArray()
+    public function toArray(NullableStrategy $nullableStrategy)
     {
         return array_merge(
-            array_filter([
+            $nullableStrategy === NullableStrategy::NULLABLE ? [
+                'type' => $this->type,
+                'nullable' => $this->nullable,
+            ] : [
                 'type' => $this->nullable ? [$this->type, 'null'] : $this->type,
+            ],
+            array_filter([
                 'format' => $this->format,
                 'contentMediaType' => $this->contentMediaType,
                 'contentEncoding' => $this->contentEncoding,

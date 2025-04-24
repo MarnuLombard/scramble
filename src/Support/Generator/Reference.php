@@ -2,6 +2,7 @@
 
 namespace Dedoc\Scramble\Support\Generator;
 
+use Dedoc\Scramble\Configuration\Enums\NullableStrategy;
 use Dedoc\Scramble\Support\Generator\Combined\AnyOf;
 use Dedoc\Scramble\Support\Generator\Types\NullType;
 use Dedoc\Scramble\Support\Generator\Types\Type;
@@ -41,15 +42,16 @@ class Reference extends Type
         return $this->components->uniqueSchemaName($this->shortName ?: $this->fullName);
     }
 
-    public function toArray()
+    public function toArray(NullableStrategy $nullableStrategy)
     {
-        if ($this->nullable) {
-            return (new AnyOf)->setItems([(clone $this)->nullable(false), new NullType])->toArray();
+        if ($this->nullable && $nullableStrategy === NullableStrategy::UNION_TYPES) {
+            return (new AnyOf)->setItems([(clone $this)->nullable(false), new NullType])->toArray($nullableStrategy);
         }
 
         return array_filter([
             'description' => $this->description,
             '$ref' => "#/components/{$this->referenceType}/{$this->getUniqueName()}",
+            $nullableStrategy === NullableStrategy::NULLABLE ? $this->nullable : null,
         ]);
     }
 }
